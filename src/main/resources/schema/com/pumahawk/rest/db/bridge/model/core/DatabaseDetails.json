@@ -1,0 +1,14 @@
+{
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "tables": {
+            "type": "array",
+            "items": {
+                "type": "string"
+            }
+        }
+    }
+}

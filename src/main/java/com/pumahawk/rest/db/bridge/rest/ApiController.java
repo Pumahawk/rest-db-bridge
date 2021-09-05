@@ -3,9 +3,12 @@ package com.pumahawk.rest.db.bridge.rest;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.pumahawk.rest.db.bridge.controller.GetDbDetailsService;
 import com.pumahawk.rest.db.bridge.controller.GetDbService;
 import com.pumahawk.rest.db.bridge.dto.Database;
+import com.pumahawk.rest.db.bridge.dto.GetDBDetailsResponse;
 import com.pumahawk.rest.db.bridge.dto.GetDBResponse;
+import com.pumahawk.rest.db.bridge.dto.Table;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +22,9 @@ public class ApiController {
 
     @Autowired
     private GetDbService getDbService;
+
+    @Autowired
+    private GetDbDetailsService getDbDetailsService;
 
     @GetMapping("/db")
     public ResponseEntity<GetDBResponse> getRootApi() {
@@ -43,9 +49,22 @@ public class ApiController {
     }
 
     @GetMapping("/db/{dbName}")
-    public ResponseEntity<Void> getDatabase(
+    public ResponseEntity<GetDBDetailsResponse> getDatabase(
         @PathVariable("dbName") String dbName) {
-        return null;
+
+        List<String> tables = getDbDetailsService.getDatabaseDetails(dbName);
+        if (tables != null) {
+            GetDBDetailsResponse response = new GetDBDetailsResponse();
+            response.setName(dbName);
+            response.setRef("/db/" + dbName);
+            response.setTables(tables.stream().map(name -> new Table(){{
+                setName(name);
+                setRef("/db/" + dbName + "/" + name);
+            }}).collect(Collectors.toList()));
+            return ResponseEntity.ok().body(response);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @GetMapping("/db/{dbName}/_select")
