@@ -1,0 +1,11 @@
+{
+  "type": "object",
+  "properties": {
+    "databaseConections": {
+      "type": "array",
+      "items": {
+        "$ref": "DatabaseConnection.json"
+      }
+    }
+  }
+}
