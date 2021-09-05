@@ -1,0 +1,14 @@
+{
+    "type" : "object",
+    "extends" : {
+        "$ref" : "ApiResponse.json"
+    },
+    "properties": {
+        "records": {
+            "type": "array",
+            "items": {
+                "existingJavaType": "com.fasterxml.jackson.databind.JsonNode"
+            }
+        }
+    }
+}

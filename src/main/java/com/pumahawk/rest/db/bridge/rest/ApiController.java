@@ -3,11 +3,14 @@ package com.pumahawk.rest.db.bridge.rest;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.pumahawk.rest.db.bridge.controller.GetDbDetailsService;
 import com.pumahawk.rest.db.bridge.controller.GetDbService;
+import com.pumahawk.rest.db.bridge.controller.SelectTableService;
 import com.pumahawk.rest.db.bridge.dto.Database;
 import com.pumahawk.rest.db.bridge.dto.GetDBDetailsResponse;
 import com.pumahawk.rest.db.bridge.dto.GetDBResponse;
+import com.pumahawk.rest.db.bridge.dto.SelectTableResponse;
 import com.pumahawk.rest.db.bridge.dto.Table;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +28,9 @@ public class ApiController {
 
     @Autowired
     private GetDbDetailsService getDbDetailsService;
+
+    @Autowired
+    private SelectTableService selectTableService;
 
     @GetMapping("/db")
     public ResponseEntity<GetDBResponse> getRootApi() {
@@ -86,13 +92,20 @@ public class ApiController {
     }
 
     @GetMapping("/db/{dbName}/{tableName}/_select")
-    public ResponseEntity<Void> getTableSelect(
+    public ResponseEntity<SelectTableResponse> getTableSelect(
         @PathVariable("dbName") String dbName,
         @PathVariable("tableName") String tableName,
-        @RequestParam("w") String where,
-        @RequestParam("l") int limit,
-        @RequestParam("s") int skip) {
-        return null;
+        @RequestParam(value = "w", required = false) String where,
+        @RequestParam(value = "l", required = false) Integer limit,
+        @RequestParam(value = "s", required = false) Integer skip) {
+            
+        List<JsonNode> records = selectTableService.selectFromTable(dbName, tableName, where, limit, skip);
+
+        SelectTableResponse response = new SelectTableResponse();
+        response.setRef("/db/" + dbName + "/" + tableName + "/_select");
+        response.setRecords(records);
+
+        return ResponseEntity.ok().body(response);
     }
 
 }

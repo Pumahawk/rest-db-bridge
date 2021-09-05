@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ConfigurationLoader {
 
-    @Value("${config-file}")
-    String configurationPath;
+    @Value("${configFile}")
+    private String configurationPath;
 
     @Bean
     public ApplicationConfiguration applicationConfiguration() throws JsonParseException, JsonMappingException, IOException {
