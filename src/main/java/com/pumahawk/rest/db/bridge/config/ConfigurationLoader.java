@@ -19,7 +19,7 @@ public class ConfigurationLoader {
     String configurationPath;
 
     @Bean
-    public ApplicationConfiguration serverConfiguration() throws JsonParseException, JsonMappingException, IOException {
+    public ApplicationConfiguration applicationConfiguration() throws JsonParseException, JsonMappingException, IOException {
         return new ObjectMapper().readValue(Paths.get(configurationPath).toFile(), ApplicationConfiguration.class);
     }
 }
