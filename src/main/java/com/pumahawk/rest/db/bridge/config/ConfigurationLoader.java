@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ConfigurationLoader {
 
-    @Value("${config-file}:configuration.json")
+    @Value("${config-file}")
     String configurationPath;
 
     @Bean

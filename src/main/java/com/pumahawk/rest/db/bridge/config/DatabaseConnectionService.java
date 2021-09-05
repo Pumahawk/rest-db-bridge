@@ -1,6 +1,7 @@
 package com.pumahawk.rest.db.bridge.config;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -30,10 +31,11 @@ public class DatabaseConnectionService {
 
     @PostConstruct
     private void satabaseConnectionServiceInit() {
-        if (connections.isEmpty()) {
+        List<DatabaseConnection>  connectinosDatabase = applicationConfiguration.getDatabaseConections();
+        if (connectinosDatabase.isEmpty()) {
             log.warn("No database connection found");
         } else {
-            for (DatabaseConnection connection : applicationConfiguration.getDatabaseConections()) {
+            for (DatabaseConnection connection : connectinosDatabase) {
                 try {
                     DataSource dataSource = getDatasourceFromConfig(connection.getConnectionParameter());
                     storeConnection(connection.getName(), dataSource);
