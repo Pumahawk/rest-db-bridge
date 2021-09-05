@@ -1,0 +1,17 @@
+{
+    "databaseConections": [
+        {
+            "name": "****",
+            "alias": [
+                "****",
+                "****"
+            ],
+            "connectionParameter": {
+                "driverClass": "oracle.jdbc.driver.OracleDriver",
+                "url": "****",
+                "username": "****",
+                "password": "****"
+            }
+        }
+    ]
+}
