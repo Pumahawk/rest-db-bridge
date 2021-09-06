@@ -52,7 +52,7 @@ public class SelectTableService {
                                 on.put(meta.getColumnName(i), Base64.getEncoder().encodeToString(resultSet.getBytes(i)));
                                 break;
                             default:
-                                on.put(meta.getColumnName(i), resultSet.getObject(i).toString());
+                                on.put(meta.getColumnName(i), String.valueOf(resultSet.getObject(i)));
                         }
                     }
                     records.add(on);
