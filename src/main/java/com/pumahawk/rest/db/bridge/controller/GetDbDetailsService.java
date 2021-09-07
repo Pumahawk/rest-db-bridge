@@ -2,7 +2,6 @@ package com.pumahawk.rest.db.bridge.controller;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -42,7 +41,7 @@ public class GetDbDetailsService {
             }
         } catch (Exception e) {
             log.error("Unable to retrieve tables for database: {}", databaseName, e);
-            return Collections.emptyList();
+            throw new RuntimeException("Unable to Get DB details", e);
         } finally {
             if (connection != null) {
                 try {

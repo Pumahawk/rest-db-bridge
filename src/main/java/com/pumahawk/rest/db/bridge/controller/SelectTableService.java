@@ -5,7 +5,6 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.Types;
 import java.util.Base64;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -64,7 +63,7 @@ public class SelectTableService {
         } catch (Exception e) {
             log.error("query: {}", sql);
             log.error("Unable to retrieve tables for database: {}, table: {}", databaseName, table, e);
-            return Collections.emptyList();
+            throw new RuntimeException("Unable to query table: " + table, e);
         } finally {
             if (connection != null) {
                 try {
