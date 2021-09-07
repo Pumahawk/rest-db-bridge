@@ -29,12 +29,12 @@ public class SelectTableService {
     @Autowired
     private DatabaseConnectionService databaseConnectionService;
 
-    public List<JsonNode> selectFromTable(String databaseName, String table, String where, Integer limit, Integer skip) {
+    public List<JsonNode> selectFromTable(String databaseName, String table, String columns, String where, Integer limit, Integer skip) {
  
         Connection connection = null;
         String limitSql = "OFFSET " + (skip != null ? skip.toString() : "0") + " ROWS FETCH NEXT " + (limit != null ? limit.toString() : "50") + " ROWS ONLY";
         String whereSql = where != null ? "WHERE " + where : "";
-        String sql = "SELECT * from " + table + " " + whereSql + " " + limitSql;
+        String sql = "SELECT " + (columns != null ? columns : "*") + " from " + table + " " + whereSql + " " + limitSql;
         try {
             DataSource dataSource = databaseConnectionService.getDatasource(databaseName);
             if (dataSource != null) {

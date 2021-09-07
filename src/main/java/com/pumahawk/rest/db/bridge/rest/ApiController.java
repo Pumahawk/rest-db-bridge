@@ -95,11 +95,12 @@ public class ApiController {
     public ResponseEntity<SelectTableResponse> getTableSelect(
         @PathVariable("dbName") String dbName,
         @PathVariable("tableName") String tableName,
+        @RequestParam(value = "c", required = false) String columns,
         @RequestParam(value = "w", required = false) String where,
         @RequestParam(value = "l", required = false) Integer limit,
         @RequestParam(value = "s", required = false) Integer skip) {
             
-        List<JsonNode> records = selectTableService.selectFromTable(dbName, tableName, where, limit, skip);
+        List<JsonNode> records = selectTableService.selectFromTable(dbName, tableName, columns, where, limit, skip);
 
         SelectTableResponse response = new SelectTableResponse();
         response.setRef("/db/" + dbName + "/" + tableName + "/_select");
