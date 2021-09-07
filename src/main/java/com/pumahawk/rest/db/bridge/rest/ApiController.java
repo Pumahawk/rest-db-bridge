@@ -11,6 +11,7 @@ import com.pumahawk.rest.db.bridge.dto.Database;
 import com.pumahawk.rest.db.bridge.dto.GetDBDetailsResponse;
 import com.pumahawk.rest.db.bridge.dto.GetDBResponse;
 import com.pumahawk.rest.db.bridge.dto.SelectTableResponse;
+import com.pumahawk.rest.db.bridge.dto.SqlConditions;
 import com.pumahawk.rest.db.bridge.dto.Table;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -97,14 +98,20 @@ public class ApiController {
         @PathVariable("tableName") String tableName,
         @RequestParam(value = "c", required = false) String columns,
         @RequestParam(value = "w", required = false) String where,
-        @RequestParam(value = "l", required = false) Integer limit,
+        @RequestParam(value = "l", required = false, defaultValue = "50") Integer limit,
         @RequestParam(value = "s", required = false) Integer skip) {
-            
+
         List<JsonNode> records = selectTableService.selectFromTable(dbName, tableName, columns, where, limit, skip);
 
         SelectTableResponse response = new SelectTableResponse();
         response.setRef("/db/" + dbName + "/" + tableName + "/_select");
         response.setRecords(records);
+
+        SqlConditions sqlConditions = new SqlConditions();
+        sqlConditions.setWhere(where);
+        sqlConditions.setLimit(limit != null ? limit.toString() : null);
+        sqlConditions.setSkip(skip != null ? skip.toString() : null);
+        response.setSqlConditions(sqlConditions);
 
         return ResponseEntity.ok().body(response);
     }

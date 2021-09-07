@@ -4,6 +4,20 @@
         "$ref" : "ApiResponse.json"
     },
     "properties": {
+        "sqlConditions": {
+            "type": "object",
+            "properties": {
+                "where": {
+                    "type": "string"
+                },
+                "limit": {
+                    "type": "string"
+                },
+                "skip": {
+                    "type": "string"
+                }
+            }
+        },
         "records": {
             "type": "array",
             "items": {
