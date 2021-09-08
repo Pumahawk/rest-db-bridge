@@ -75,14 +75,29 @@ public class ApiController {
     }
 
     @GetMapping("/db/{dbName}/_select")
-    public ResponseEntity<Void> dBSelect(
+    public ResponseEntity<SelectTableResponse> dBSelect(
         @PathVariable("dbName") String dbName,
-        @RequestParam("c") String colums,
-        @RequestParam("f") String from,
-        @RequestParam("w") String where,
-        @RequestParam("l") int limit,
-        @RequestParam("s") int skip) {
-        return null;
+        @RequestParam(value = "c", required = false) String columns,
+        @RequestParam(value = "f", required = true) String from,
+        @RequestParam(value = "w", required = false) String where,
+        @RequestParam(value = "l", required = false, defaultValue = "50") Integer limit,
+        @RequestParam(value = "s", required = false) Integer skip) {
+
+            List<JsonNode> records = selectTableService.selectFromTable(dbName, from, columns, where, limit, skip);
+    
+            SelectTableResponse response = new SelectTableResponse();
+            response.setRef("/db/" + dbName + "/_select");
+            response.setRecords(records);
+    
+            SqlConditions sqlConditions = new SqlConditions();
+            sqlConditions.setWhere(where);
+            sqlConditions.setLimit(limit != null ? limit.toString() : null);
+            sqlConditions.setSkip(skip != null ? skip.toString() : null);
+            sqlConditions.setColumns(columns);
+            sqlConditions.setFrom(from);
+            response.setSqlConditions(sqlConditions);
+    
+            return ResponseEntity.ok().body(response);
     }
 
     @GetMapping("/db/{dbName}/{tableName}")
@@ -111,6 +126,7 @@ public class ApiController {
         sqlConditions.setWhere(where);
         sqlConditions.setLimit(limit != null ? limit.toString() : null);
         sqlConditions.setSkip(skip != null ? skip.toString() : null);
+        sqlConditions.setColumns(columns);
         response.setSqlConditions(sqlConditions);
 
         return ResponseEntity.ok().body(response);

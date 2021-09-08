@@ -41,7 +41,7 @@ public class GetDbDetailsService {
             }
         } catch (Exception e) {
             log.error("Unable to retrieve tables for database: {}", databaseName, e);
-            throw new RuntimeException("Unable to Get DB details", e);
+            throw new RuntimeException("Unable to Get DB details. Database: " + databaseName, e);
         } finally {
             if (connection != null) {
                 try {

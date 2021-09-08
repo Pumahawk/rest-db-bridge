@@ -62,8 +62,8 @@ public class SelectTableService {
             }
         } catch (Exception e) {
             log.error("query: {}", sql);
-            log.error("Unable to retrieve tables for database: {}, table: {}", databaseName, table, e);
-            throw new RuntimeException("Unable to query table: " + table, e);
+            log.error("Unable to retrieve tables for database: {}, table: {}, query: {}", databaseName, table, sql, e);
+            throw new RuntimeException("Unable to query table: " + table + " query: " + sql, e);
         } finally {
             if (connection != null) {
                 try {

@@ -7,6 +7,12 @@
         "sqlConditions": {
             "type": "object",
             "properties": {
+                "columns": {
+                    "type": "string"
+                },
+                "from": {
+                    "type": "string"
+                },
                 "where": {
                     "type": "string"
                 },
