@@ -1,9 +1,11 @@
 package com.pumahawk.rest.db.bridge.config;
 
+import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import javax.annotation.PostConstruct;
 import javax.sql.DataSource;
@@ -27,7 +29,7 @@ public class DatabaseConnectionService {
     @Autowired
     private ApplicationConfiguration applicationConfiguration;
 
-    private Map<String, DataSource> connections = new HashMap<>();
+    private Map<String, Supplier<DataSource>> connections = new HashMap<>();
 
     @PostConstruct
     private void satabaseConnectionServiceInit() {
@@ -37,7 +39,13 @@ public class DatabaseConnectionService {
         } else {
             for (DatabaseConnection connection : connectinosDatabase) {
                 try {
-                    DataSource dataSource = getDatasourceFromConfig(connection.getConnectionParameter());
+                    Supplier<DataSource> dataSource = () -> {
+                        try {
+                            return getDatasourceFromConfig(connection.getConnectionParameter());
+                        } catch (Exception e) {
+                            throw new RuntimeException("unable to get datasource", e);
+                        }
+                    };
                     storeConnection(connection.getName(), dataSource);
                     for (String alias : connection.getAlias()) {
                         storeConnection(alias, dataSource);
@@ -50,8 +58,22 @@ public class DatabaseConnectionService {
 
     }
 
-    private void storeConnection(String name, DataSource connection) {
-        connections.put(name, connection);
+    private void storeConnection(String name, Supplier<DataSource> connection) {
+        AbstractMap.SimpleEntry<String, DataSource> ds = new AbstractMap.SimpleEntry<String, DataSource>(null, null);
+        connections.put(name, () -> {
+            if (ds.getValue() != null) {
+                return ds.getValue();
+            } else {
+                try {
+                    DataSource d = connection.get();
+                    ds.setValue(d);
+                    return d;
+                } catch (Exception e) {
+                    log.error("Error connection. name: " + name);
+                    throw new RuntimeException("Unable to get ex", e);
+                }
+            }
+        });
         log.info("Register database connection. Name: {}", name);
     }
 
@@ -65,7 +87,7 @@ public class DatabaseConnectionService {
     }
 
     public DataSource getDatasource(String dbName) {
-        return connections.get(dbName);
+        return connections.get(dbName).get();
     }
 
     public Set<String> getDatabaseList() {
