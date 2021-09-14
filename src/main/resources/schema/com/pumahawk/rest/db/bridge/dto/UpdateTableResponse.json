@@ -1,0 +1,14 @@
+{
+    "type": "object",
+    "extends" : {
+        "$ref" : "ApiResponse.json"
+    },
+    "properties": {
+        "query": {
+            "type": "string"
+        },
+        "count": {
+            "type": "string"
+        }
+    }
+}

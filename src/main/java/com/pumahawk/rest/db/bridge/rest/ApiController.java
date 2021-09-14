@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.pumahawk.rest.db.bridge.controller.GetDbDetailsService;
 import com.pumahawk.rest.db.bridge.controller.GetDbService;
 import com.pumahawk.rest.db.bridge.controller.SelectTableService;
+import com.pumahawk.rest.db.bridge.controller.UpdateTableService;
 import com.pumahawk.rest.db.bridge.dto.Database;
 import com.pumahawk.rest.db.bridge.dto.GetDBDetailsResponse;
 import com.pumahawk.rest.db.bridge.dto.GetDBResponse;
@@ -15,9 +16,12 @@ import com.pumahawk.rest.db.bridge.dto.SqlConditions;
 import com.pumahawk.rest.db.bridge.dto.Table;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -32,6 +36,9 @@ public class ApiController {
 
     @Autowired
     private SelectTableService selectTableService;
+
+    @Autowired
+    private UpdateTableService updateTableService;
 
     @GetMapping("/db")
     public ResponseEntity<GetDBResponse> getRootApi() {
@@ -100,14 +107,14 @@ public class ApiController {
             return ResponseEntity.ok().body(response);
     }
 
-    @GetMapping("/db/{dbName}/{tableName}")
+    @GetMapping("/db/{dbName}/{tableName}/_info")
     public ResponseEntity<Void> getTable(
         @PathVariable("dbName") String dbName,
         @PathVariable("tableName") String tableName) {
         return null;
     }
 
-    @GetMapping("/db/{dbName}/{tableName}/_select")
+    @GetMapping("/db/{dbName}/{tableName}")
     public ResponseEntity<SelectTableResponse> getTableSelect(
         @PathVariable("dbName") String dbName,
         @PathVariable("tableName") String tableName,
@@ -119,7 +126,7 @@ public class ApiController {
         List<JsonNode> records = selectTableService.selectFromTable(dbName, tableName, columns, where, limit, skip);
 
         SelectTableResponse response = new SelectTableResponse();
-        response.setRef("/db/" + dbName + "/" + tableName + "/_select");
+        response.setRef("/db/" + dbName + "/" + tableName);
         response.setRecords(records);
 
         SqlConditions sqlConditions = new SqlConditions();
@@ -130,6 +137,16 @@ public class ApiController {
         response.setSqlConditions(sqlConditions);
 
         return ResponseEntity.ok().body(response);
+    }
+
+    @PutMapping(value = "/db/{dbName}/{tableName}", consumes = {
+        MediaType.APPLICATION_FORM_URLENCODED_VALUE,
+    })
+    public ResponseEntity<Object> updateTableUrlEncoded(
+        @PathVariable("dbName") String dbName,
+        @PathVariable("tableName") String tableName,
+        @RequestParam MultiValueMap<String, String> request) {
+            return ResponseEntity.ok().body(updateTableService.updateTableResponse(dbName, tableName, request));
     }
 
 }
